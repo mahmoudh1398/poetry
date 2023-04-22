@@ -1,0 +1,27 @@
+@import "../general/mixin";
+
+.modal-wrapper {
+  position: absolute;
+  @include full-width;
+  height: auto;
+  top: 0;
+  @include flex-align-justify-center;
+  z-index: 10000;
+  .masked-fix {
+    @include full-width-view;
+    @include full-height-view;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    right: 0;
+  }
+  & > .container__modal {
+    position: fixed;
+    top: 0;
+    @include full-width;
+    @include full-height;
+    overflow-y: auto;
+    @include flex-align-justify-center;
+    min-height: 100vh;
+  }
+}

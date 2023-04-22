@@ -1,0 +1,71 @@
+@import "../general/variable";
+
+.poem {
+  width: 50%;
+  @media only screen and (max-width: 425px) {
+    width: 80%;
+  }
+  height: 90%;
+  background-color: white;
+  border-radius: $secondary-border-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  .heading {
+    @include full-width;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 0 1rem;
+    h3 {
+      text-align: center;
+    }
+    .close-btn {
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      position: relative;
+      &:hover {
+        &::after {
+          content: "close";
+          position: absolute;
+          bottom: -35px;
+          background-color: #00695c;
+          color: white;
+          border-radius: $tertiary-border-radius;
+          padding: 0.5rem;
+        }
+      }
+    }
+    .favorite-btn {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      @include flex-align-justify-center;
+      position: relative;
+      &:hover {
+        &::after {
+          content: "favorite";
+          position: absolute;
+          bottom: -30px;
+          background-color: #00695c;
+          color: white;
+          border-radius: $tertiary-border-radius;
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+  .poem-author {
+    color: #00695c;
+    padding: 1rem 0;
+  }
+  .poem-text {
+    @include full-width;
+    height: auto;
+    overflow-y: auto;
+    padding-top: 2rem;
+  }
+}
