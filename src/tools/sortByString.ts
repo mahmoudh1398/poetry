@@ -1,4 +1,4 @@
-import { FILTER_OPTIONS } from "enums/filter-options-enum";
+import { FILTER_OPTIONS } from "enums/filter-options.enum";
 import { FilterOptionsModel } from "models/filter-options.model";
 import { PoemModel, PoemsModel } from "models/poems.model";
 

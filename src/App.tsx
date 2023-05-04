@@ -1,23 +1,24 @@
 import axios from "axios";
 import Poem from "components/Poem";
 import Modal from "components/Modal";
-import { useRef, useState } from "react";
 import Loading from "components/Loading";
 import { BASE_URL } from "configs/urls.config";
 import UpArrowIcon from "assets/icons/up-arrow";
 import { FILTERS } from "configs/filters.config";
 import { sortByString } from "tools/sortByString";
+import { RefObject, useRef, useState } from "react";
 import DownArrowIcon from "assets/icons/down-arrow";
-import { PoemModel, PoemsModel } from "models/poems.model";
-import { useCloseByClickOutSide } from "tools/closeByClickOutside";
 import { useDispatch, useSelector } from "react-redux";
 import { REDUX_ACTION } from "enums/redux-action.enum";
+import { PoemModel, PoemsModel } from "models/poems.model";
 import { ReduxStoreModel } from "models/redux-store-model";
+import { useCloseByClickOutSide } from "tools/closeByClickOutside";
+import { EMPTY_LIST_ALTERNATIVE_TEXT } from "configs/empty-list-text.config";
 
 const App = (): JSX.Element => {
   const dispatch = useDispatch();
 
-  const sortDropdownRef = useRef(null);
+  const sortDropdownRef: RefObject<HTMLDivElement> = useRef(null);
 
   const favoritePoems = useSelector<
     ReduxStoreModel,
@@ -26,11 +27,10 @@ const App = (): JSX.Element => {
 
   const [poems, setPoems] = useState<PoemsModel>([]);
   const [selectedPoem, setSelectedPoem] = useState<PoemModel | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState<string>("");
+  const [selectedFilter, setSelectedFilter] = useState<string>("title");
   const [loading, setLoading] = useState<boolean>(false);
   const [isSelectOpened, setIsSelectOpened] = useState<boolean>(false);
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
-  const [showFavorites, setShowFavorites] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>("poems");
 
   useCloseByClickOutSide({
@@ -42,9 +42,9 @@ const App = (): JSX.Element => {
   const handleFetchPoems = async () => {
     try {
       setLoading(true);
-      setShowFavorites(false);
+      setSelectedTab("poems");
       const response = await axios.get(`${BASE_URL}/random/20`);
-      setPoems(response.data);
+      setPoems(sortByString({ arr: response.data, filter: selectedFilter }));
     } catch (error) {
       console.log(error);
     } finally {
@@ -54,12 +54,9 @@ const App = (): JSX.Element => {
 
   const handleSelectFilter = (filter: string) => {
     setSelectedFilter(filter);
-    if (showFavorites) {
-      const newList = sortByString({ arr: favoritePoems, filter: filter });
-      dispatch({ type: REDUX_ACTION.SET_FAVORITE_POEMS, payload: newList });
-    } else {
-      setPoems(sortByString({ arr: poems, filter: filter }));
-    }
+    const newList = sortByString({ arr: favoritePoems, filter: filter });
+    dispatch({ type: REDUX_ACTION.SET_FAVORITE_POEMS, payload: newList });
+    setPoems(sortByString({ arr: poems, filter: filter }));
     setIsSelectOpened(false);
   };
 
@@ -69,8 +66,8 @@ const App = (): JSX.Element => {
   };
 
   const handleFavoritePoem = (poem: PoemModel) => {
-    if (favoritePoems.length && favoritePoems?.includes(poem)) {
-      const newList = favoritePoems?.filter((p: PoemModel) => p !== poem);
+    if (favoritePoems?.length && favoritePoems.includes(poem)) {
+      const newList = favoritePoems.filter((p: PoemModel) => p !== poem);
       dispatch({
         type: REDUX_ACTION.SET_FAVORITE_POEMS,
         payload: newList,
@@ -83,7 +80,7 @@ const App = (): JSX.Element => {
     }
   };
 
-  const switcher = (type: string): PoemsModel => {
+  const listSwitcher = (type: string): PoemsModel => {
     return type === "favorites" ? favoritePoems : poems;
   };
 
@@ -93,7 +90,7 @@ const App = (): JSX.Element => {
         <h2>Read Random Poems</h2>
 
         <button onClick={handleFetchPoems} className="fetch-btn">
-          Fetch Poems
+          {poems?.length ? "Fetch New Poems" : "Fetch Poems"}
         </button>
 
         <div className="sort-wrapper">
@@ -149,14 +146,19 @@ const App = (): JSX.Element => {
           </button>
         </div>
         <div className="list-wrapper">
-          <ul className="list">
-            {loading ? (
-              <div className="loading-wrapper">
-                <Loading />
-              </div>
-            ) : (
-              switcher(showFavorites ? "favorites" : "poems")?.map(
-                (poem: PoemModel) => (
+          {listSwitcher(selectedTab === "favorites" ? "favorites" : "poems")
+            ?.length === 0 && !loading ? (
+            <p>{EMPTY_LIST_ALTERNATIVE_TEXT[selectedTab]}</p>
+          ) : (
+            <ul className="list">
+              {loading ? (
+                <div className="loading-wrapper">
+                  <Loading />
+                </div>
+              ) : (
+                listSwitcher(
+                  selectedTab === "favorites" ? "favorites" : "poems"
+                )?.map((poem: PoemModel) => (
                   <li
                     key={poem.title}
                     className="poem-card"
@@ -165,10 +167,10 @@ const App = (): JSX.Element => {
                     <h4>{poem.title}</h4>
                     <p>{poem.author}</p>
                   </li>
-                )
-              )
-            )}
-          </ul>
+                ))
+              )}
+            </ul>
+          )}
         </div>
       </div>
       {isModalOpened ? (
