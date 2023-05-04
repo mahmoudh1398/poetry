@@ -19,6 +19,11 @@ const App = (): JSX.Element => {
 
   const sortDropdownRef = useRef(null);
 
+  const favoritePoems = useSelector<
+    ReduxStoreModel,
+    ReduxStoreModel["favoritePoems"]
+  >((store: ReduxStoreModel) => store.favoritePoems);
+
   const [poems, setPoems] = useState<PoemsModel>([]);
   const [selectedPoem, setSelectedPoem] = useState<PoemModel | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>("");
@@ -26,11 +31,7 @@ const App = (): JSX.Element => {
   const [isSelectOpened, setIsSelectOpened] = useState<boolean>(false);
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
-
-  const favoritePoems = useSelector<
-    ReduxStoreModel,
-    ReduxStoreModel["favoritePoems"]
-  >((store: ReduxStoreModel) => store.favoritePoems);
+  const [selectedTab, setSelectedTab] = useState<string>("poems");
 
   useCloseByClickOutSide({
     ref: sortDropdownRef,
@@ -41,7 +42,6 @@ const App = (): JSX.Element => {
   const handleFetchPoems = async () => {
     try {
       setLoading(true);
-      setSelectedFilter("");
       setShowFavorites(false);
       const response = await axios.get(`${BASE_URL}/random/20`);
       setPoems(response.data);
@@ -83,11 +83,6 @@ const App = (): JSX.Element => {
     }
   };
 
-  const showFavoritePoems = () => {
-    setSelectedFilter("");
-    setShowFavorites(true);
-  };
-
   const switcher = (type: string): PoemsModel => {
     return type === "favorites" ? favoritePoems : poems;
   };
@@ -101,10 +96,6 @@ const App = (): JSX.Element => {
           Fetch Poems
         </button>
 
-        <button className="favorites-btn" onClick={showFavoritePoems}>
-          Favorite Poems
-        </button>
-
         <div className="sort-wrapper">
           <span>Sort by:</span>
 
@@ -115,9 +106,9 @@ const App = (): JSX.Element => {
             >
               <span>{selectedFilter}</span>
               {isSelectOpened ? (
-                <UpArrowIcon color="#00695c" />
+                <UpArrowIcon color="#bfbfbf" />
               ) : (
-                <DownArrowIcon color="#00695c" />
+                <DownArrowIcon color="#bfbfbf" />
               )}
             </div>
 
@@ -138,29 +129,48 @@ const App = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="list-wrapper">
-        <ul className="list">
-          {loading ? (
-            <div className="loading-wrapper">
-              <Loading />
-            </div>
-          ) : (
-            switcher(showFavorites ? "favorites" : "poems")?.map(
-              (poem: PoemModel) => (
-                <li
-                  key={poem.title}
-                  className="poem-card"
-                  onClick={() => handleSelectPoem(poem)}
-                >
-                  <h4>{poem.title}</h4>
-                  <p>{poem.author}</p>
-                </li>
+      <div className="list-container">
+        <div className="tabs">
+          <button
+            className={`${
+              selectedTab === "poems" ? "selected-tab tab" : "tab"
+            }`}
+            onClick={() => setSelectedTab("poems")}
+          >
+            Poems
+          </button>
+          <button
+            className={`${
+              selectedTab === "favorites" ? "selected-tab tab" : "tab"
+            }`}
+            onClick={() => setSelectedTab("favorites")}
+          >
+            Favorites
+          </button>
+        </div>
+        <div className="list-wrapper">
+          <ul className="list">
+            {loading ? (
+              <div className="loading-wrapper">
+                <Loading />
+              </div>
+            ) : (
+              switcher(showFavorites ? "favorites" : "poems")?.map(
+                (poem: PoemModel) => (
+                  <li
+                    key={poem.title}
+                    className="poem-card"
+                    onClick={() => handleSelectPoem(poem)}
+                  >
+                    <h4>{poem.title}</h4>
+                    <p>{poem.author}</p>
+                  </li>
+                )
               )
-            )
-          )}
-        </ul>
+            )}
+          </ul>
+        </div>
       </div>
-
       {isModalOpened ? (
         <Modal show={isModalOpened} onClose={() => setIsModalOpened(false)}>
           <Poem

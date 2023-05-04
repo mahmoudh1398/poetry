@@ -27,7 +27,7 @@ const Poem: FC<PoemProps> = ({
         <h3>{poem?.title}</h3>
 
         <div
-          className="favorite-btn"
+          className={`${isFavorite ? "unfavorite-btn" : "favorite-btn"}`}
           onClick={() => poem && handleFavoritePoem(poem)}
         >
           {isFavorite ? <FillFavoriteIcon /> : <OutlineFavoriteIcon />}
