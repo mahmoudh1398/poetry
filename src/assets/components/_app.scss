@@ -3,7 +3,7 @@
 
 .app-container {
   display: flex;
-  @media only screen and (max-width: 425px) {
+  @media only screen and (max-width: 768px) {
     flex-direction: column;
   }
   justify-content: space-between;
@@ -17,7 +17,7 @@
     gap: 4rem;
     padding: 2rem 0.5rem;
     width: 20%;
-    @media only screen and (max-width: 425px) {
+    @media only screen and (max-width: 768px) {
       width: 100%;
     }
     @include full-height;
@@ -106,7 +106,7 @@
     padding: 1rem;
     @include full-height;
     width: 80%;
-    @media only screen and (max-width: 425px) {
+    @media only screen and (max-width: 768px) {
       width: 100%;
     }
     .tabs {
@@ -115,6 +115,9 @@
       align-items: center;
       justify-content: space-around;
       width: 35%;
+      @media only screen and (max-width: 768px) {
+        width: 100%;
+      }
       border-radius: $primary-border-radius $primary-border-radius 0 0;
       background-color: $fourth-color;
       border-bottom: none;
@@ -139,6 +142,12 @@
       height: calc(100% - 45px);
       padding: 1rem;
       border-radius: $primary-border-radius;
+      @media only screen and (max-width: 768px) {
+        border-bottom-left-radius: $primary-border-radius;
+        border-bottom-right-radius: $primary-border-radius;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+      }
       border-top-left-radius: unset;
       background-color: $fifth-color;
       display: flex;
@@ -148,18 +157,12 @@
         @include full-width;
         @include full-height;
         overflow-y: auto;
-        @media only screen and (max-width: 425px) {
-          height: auto;
-          min-height: 100%;
-          max-height: none;
-          overflow-y: unset;
-        }
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         @media only screen and (max-width: 1024px) {
           grid-template-columns: repeat(2, 1fr);
         }
-        @media only screen and (max-width: 425px) {
+        @media only screen and (max-width: 768px) {
           grid-template-columns: 1fr;
         }
         grid-template-rows: auto;
