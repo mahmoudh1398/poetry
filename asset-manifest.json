@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/poetry/static/css/main.647d8591.css",
+    "main.js": "/poetry/static/js/main.0846dd5c.js",
+    "index.html": "/poetry/index.html",
+    "main.647d8591.css.map": "/poetry/static/css/main.647d8591.css.map",
+    "main.0846dd5c.js.map": "/poetry/static/js/main.0846dd5c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.647d8591.css",
+    "static/js/main.0846dd5c.js"
+  ]
+}
